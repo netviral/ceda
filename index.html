@@ -127,14 +127,14 @@
               <!-- Modal Body -->
               <div class="modal-body">
                   <select class="form-select" id="indicator">
-                    <option selected disabled>Select Indicator</option>
+                    <option value="selected" selected disabled>Select Indicator</option>
                     <option value="Assesable value">Assesable value</option>
                     <option value="Number of e-way bills">Number of e-way bills</option>
                     <option value="Number of suppliers">Number of suppliers</option>
                   </select><br />
   
                   <select class="form-select" id="direction">
-                    <option selected disabled>Select Direction</option>
+                    <option value="selected" selected disabled>Select Direction</option>
                     <option value="Incoming from other states">Incoming from other states</option>
                     <option value="Outgoing to other states">Outgoing to other states</option>
                     <option value="Within state">Within state</option>
@@ -256,13 +256,30 @@
     var lineFilters=[{'indicator':'Assessable value','direction':'Outgoing to other states'},{'indicator':'Number of suppliers','direction':'Outgoing to other states'}];
     function addToChart(){
       dir = document.getElementById("direction").value;
+      document.getElementById("direction").value="selected";
       ind = document.getElementById("indicator").value;
-      addLine({'indicator':ind,'direction':dir})
+      document.getElementById("indicator").value="selected";
+      
+      let foundObj = lineFilters.find(item => item.indicator === ind && item.direction === dir);
+      console.log("HAHA",foundObj)
+      if (foundObj) {
+          alert("Data already on chart");
+      }else{
+          addLine({'indicator':ind,'direction':dir});
+      }
+    }
+
+    // Function to remove an object from an array
+    function removeObjectFromArray(array, obj) {
+      return array.filter(item => item !== obj);
     }
 
     function removeLine(obj){
-        lineFilters.pop(obj);
-          makeSVG(parsedData);
+        let foundObj = lineFilters.find(item => item.indicator === obj.indicator && item.direction === obj.direction);
+        if (foundObj) {
+          lineFilters = removeObjectFromArray(lineFilters, foundObj);
+        }
+        makeSVG(parsedData);
     }
     function addLine(obj){
           lineFilters.push(obj);
